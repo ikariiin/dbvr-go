@@ -14,7 +14,7 @@ type User struct {
 	Username    string       `gorm:"size:255;not null;unique" json:"username"`
 	Email       string       `gorm:"size:255;not null" json:"email"`
 	Password    string       `gorm:"size:255,not null" json:"-"`
-	Connections []Connection `json:"connections"`
+	Connections []Connection `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"connections"`
 }
 
 func GetUserById(uid uint, db *gorm.DB) (User, error) {
