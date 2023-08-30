@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/ikariiin/dbvr-go/models"
+	"gorm.io/gorm"
 )
 
 func GenerateToken(user models.User) (string, error) {
@@ -67,4 +68,23 @@ func ValidateToken(ctx *gin.Context) error {
 	}
 
 	return errors.New("Invalid authorization token")
+}
+
+func CurrentUser(ctx *gin.Context, db *gorm.DB) (models.User, error) {
+	err := ValidateToken(ctx)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	token, _ := GetToken(ctx)
+	claims, _ := token.Claims.(jwt.MapClaims)
+
+	userId := uint(claims["id"].(float64))
+
+	user, err := models.GetUserById(userId, db)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"html"
 	"strings"
 
@@ -13,6 +14,16 @@ type User struct {
 	Username string `gorm:"size:255;not null;unique" json:"username"`
 	Email    string `gorm:"size:255;not null" json:"email"`
 	Password string `gorm:"size:255,not null" json:"-"`
+}
+
+func GetUserById(uid uint, db *gorm.DB) (User, error) {
+	var user User
+
+	if err := db.Model(&User{}).Where("id=?", uid).Take(&user).Error; err != nil {
+		return user, errors.New("User not found")
+	}
+
+	return user, nil
 }
 
 func (user *User) HashPassword() error {
