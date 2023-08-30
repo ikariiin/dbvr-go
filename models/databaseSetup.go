@@ -22,7 +22,7 @@ func SetupDB() (*gorm.DB, error) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	if err = db.AutoMigrate(&User{}); err != nil {
+	if err = db.AutoMigrate(&User{}, &Connection{}); err != nil {
 		log.Println(err.Error())
 	}
 
