@@ -65,13 +65,11 @@ func (r *PgRoutes) createConnection(ctx *gin.Context) {
 func (r *PgRoutes) deleteConnection(ctx *gin.Context) {
 	connId, convertErr := strconv.Atoi(ctx.Param("id"))
 	user, err := utils.CurrentUser(ctx, r.db)
-
 	if err != nil || convertErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	connections, err := models.GetUserConnections(r.db, user)
-
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Could not fetch user connection strings"})
 	}
@@ -79,7 +77,6 @@ func (r *PgRoutes) deleteConnection(ctx *gin.Context) {
 	findResult := slices.IndexFunc(connections, func(c models.Connection) bool {
 		return c.ID == uint(connId)
 	})
-
 	if findResult == -1 {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized access to resource"})
 		return

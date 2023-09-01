@@ -25,6 +25,8 @@ func InitRouter() *gin.Engine {
 	authRoutes.RegisterAuthRoutes()
 	pgRoutes := routes.NewPgRoutes(db, r)
 	pgRoutes.RegisterRoutes()
+	wsRoutes := routes.NewWsRoutes(db, r)
+	wsRoutes.RegisterWsRoutes()
 
 	return r
 }
