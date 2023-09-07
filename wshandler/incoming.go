@@ -20,9 +20,9 @@ const (
 
 type WsRequest struct {
 	Name         string      `json:"name"`
-	ID           string      `json:"request-id"`
-	RequestType  RequestType `json:"request-type"`
-	RequestValue string      `json:"request-value"`
+	ID           string      `json:"requestId"`
+	RequestType  RequestType `json:"requestType"`
+	RequestValue string      `json:"requestValue"`
 }
 
 func handleInBuiltRequests(request WsRequest, db *pgx.Conn) (WsResponse, error) {

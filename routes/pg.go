@@ -13,7 +13,7 @@ import (
 )
 
 type CreateConnectionDTO struct {
-	ConnectionString string `json:"connection-string" binding:"required"`
+	ConnectionString string `json:"connectionString" binding:"required"`
 }
 
 type PgRoutes struct {

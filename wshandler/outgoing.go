@@ -7,7 +7,7 @@ import (
 
 type WsResponse struct {
 	Name       string      `json:"name"`
-	ResponseTo *string     `json:"response-to"`
+	ResponseTo *string     `json:"responseTo"`
 	Value      interface{} `json:"value"`
 }
 

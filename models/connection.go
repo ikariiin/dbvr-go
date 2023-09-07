@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type Connection struct {
 	gorm.Model
-	UserID     uint   `json:"user-id"`
-	ConnString string `json:"connection-string"`
+	UserID     uint   `json:"userId"`
+	ConnString string `json:"connectionString"`
 }
 
 func DeleteConnection(db *gorm.DB, id uint) error {
