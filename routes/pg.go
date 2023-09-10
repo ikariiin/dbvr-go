@@ -13,6 +13,7 @@ import (
 )
 
 type CreateConnectionDTO struct {
+	Label            string `json:"label" binding:"required"`
 	ConnectionString string `json:"connectionString" binding:"required"`
 }
 
@@ -54,7 +55,7 @@ func (r *PgRoutes) createConnection(ctx *gin.Context) {
 		return
 	}
 
-	if err := models.CreateUserConnection(r.db, user, input.ConnectionString); err != nil {
+	if err := models.CreateUserConnection(r.db, user, input.Label, input.ConnectionString); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

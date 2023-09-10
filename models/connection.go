@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Connection struct {
 	gorm.Model
 	UserID     uint   `json:"userId"`
+	Label      string `json:"label"`
 	ConnString string `json:"connectionString"`
 }
 

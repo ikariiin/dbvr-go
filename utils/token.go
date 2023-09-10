@@ -55,6 +55,18 @@ func GetToken(ctx *gin.Context) (*jwt.Token, error) {
 	return token, err
 }
 
+func ParseRawToken(token string) (*jwt.Token, error) {
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return []byte(os.Getenv("JWT_SIGN")), nil
+	})
+
+	return parsedToken, err
+}
+
 func ValidateToken(ctx *gin.Context) error {
 	token, err := GetToken(ctx)
 
@@ -67,7 +79,22 @@ func ValidateToken(ctx *gin.Context) error {
 		return nil
 	}
 
-	return errors.New("Invalid authorization token")
+	return errors.New("invalid authorization token")
+}
+
+func ValidateRawToken(token string) error {
+	parsedToken, err := ParseRawToken(token)
+
+	if err != nil {
+		return err
+	}
+
+	_, ok := parsedToken.Claims.(jwt.MapClaims)
+	if ok && parsedToken.Valid {
+		return nil
+	}
+
+	return errors.New("invalid authorization token")
 }
 
 func CurrentUser(ctx *gin.Context, db *gorm.DB) (models.User, error) {
@@ -78,6 +105,25 @@ func CurrentUser(ctx *gin.Context, db *gorm.DB) (models.User, error) {
 
 	token, _ := GetToken(ctx)
 	claims, _ := token.Claims.(jwt.MapClaims)
+
+	userId := uint(claims["id"].(float64))
+
+	user, err := models.GetUserById(userId, db)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
+}
+
+func GetUserFromToken(token string, db *gorm.DB) (models.User, error) {
+	err := ValidateRawToken(token)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	parsedToken, _ := ParseRawToken(token)
+	claims, _ := parsedToken.Claims.(jwt.MapClaims)
 
 	userId := uint(claims["id"].(float64))
 

@@ -9,13 +9,13 @@ type RequestType string
 
 const (
 	Query   RequestType = "query"
-	InBuilt RequestType = "in-built"
+	InBuilt RequestType = "inBuilt"
 )
 
 type InBuiltType string
 
 const (
-	UserTables InBuiltType = "user-tables"
+	UserTables InBuiltType = "userTables"
 )
 
 type WsRequest struct {

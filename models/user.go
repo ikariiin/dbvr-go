@@ -40,8 +40,8 @@ func GetUserConnections(db *gorm.DB, user User) ([]Connection, error) {
 	return connections, nil
 }
 
-func CreateUserConnection(db *gorm.DB, user User, connStr string) error {
-	conn := Connection{ConnString: connStr, UserID: user.ID}
+func CreateUserConnection(db *gorm.DB, user User, label string, connStr string) error {
+	conn := Connection{Label: label, ConnString: connStr, UserID: user.ID}
 	if err := db.Create(&conn).Error; err != nil {
 		return err
 	}

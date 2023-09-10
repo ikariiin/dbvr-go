@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/ikariiin/dbvr-go/middleware"
 	"github.com/ikariiin/dbvr-go/models"
 	"github.com/ikariiin/dbvr-go/utils"
 	"github.com/ikariiin/dbvr-go/wshandler"
@@ -34,7 +33,16 @@ func NewWsRoutes(db *gorm.DB, router *gin.Engine) *WsRoutes {
 }
 
 func (r *WsRoutes) registerWebSocket(ctx *gin.Context) {
-	user, err := utils.CurrentUser(ctx, r.db)
+	// user, err := utils.CurrentUser(ctx, r.db)
+	token := ctx.Query("token")
+	err := utils.ValidateRawToken(token)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := utils.GetUserFromToken(token, r.db)
+
 	connId, convertErr := strconv.Atoi(ctx.Param("connId"))
 	if err != nil || convertErr != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -80,7 +88,6 @@ func (r *WsRoutes) registerWebSocket(ctx *gin.Context) {
 
 func (r *WsRoutes) RegisterWsRoutes() {
 	group := r.router.Group("ws")
-	group.Use(middleware.JwtAuthMiddleware())
 
 	group.GET("/connect/:connId", r.registerWebSocket)
 }
